@@ -1,5 +1,4 @@
-# Homeland Jobs — Frontend Assessment S
-# AI used Chatgpt, Github Copilot
+# Homeland Jobs — Frontend Assessment 
 
 ## Component Architecture (Q11)
 
@@ -53,6 +52,7 @@ App
 
 ## AI Tools Used
 - GitHub Copilot (for code suggestions, refactoring, and documentation)
+- ChatGpt (for component structure )
 
 ---
 
@@ -63,5 +63,5 @@ App
 
 ---
 
-**Candidate Name:** [Your Name Here]
-**Candidate ID:** [ID Here]
+Candidate Name: Alma Mideva
+Candidate ID: HEH/DK1/006
