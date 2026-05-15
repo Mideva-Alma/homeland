@@ -1,122 +1,146 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react';
+import jobsData from './data/jobs.json';
+
+import Header from './components/Header';
+import SearchFilters from './components/SearchFilters';
+import SortDropdown from './components/SortDropdown';
+import JobList from './components/JobList';
+import JobModal from './components/JobModal';
+import LoadingSkeleton from './components/LoadingSkeleton';
+import EmptyState from './components/EmptyState';
+import ErrorState from './components/ErrorState';
 
 function App() {
-  const [count, setCount] = useState(0)
+
+  const [jobs, setJobs] = useState([]);
+  const [filteredJobs, setFilteredJobs] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  const [selectedJob, setSelectedJob] = useState(null);
+
+  const [filters, setFilters] = useState({
+    search: '',
+    category: '',
+    location: '',
+    budget: ''
+  });
+
+  const [sortOption, setSortOption] = useState('newest');
+
+  useEffect(() => {
+
+    setLoading(true);
+
+    setTimeout(() => {
+
+      try {
+
+        setJobs(jobsData);
+        setFilteredJobs(jobsData);
+        setLoading(false);
+
+      } catch (err) {
+
+        setError(true);
+        setLoading(false);
+      }
+
+    }, 1500);
+
+  }, []);
+
+  useEffect(() => {
+
+    let updatedJobs = [...jobs];
+
+    updatedJobs = updatedJobs.filter(job => {
+
+      return (
+        job.title.toLowerCase().includes(filters.search.toLowerCase()) &&
+        (filters.category === '' || job.category === filters.category) &&
+        (filters.location === '' || job.location === filters.location) &&
+        (filters.budget === '' || job.budget <= Number(filters.budget))
+      );
+    });
+
+    if (sortOption === 'budget-high') {
+      updatedJobs.sort((a, b) => b.budget - a.budget);
+    }
+
+    if (sortOption === 'budget-low') {
+      updatedJobs.sort((a, b) => a.budget - b.budget);
+    }
+
+    if (sortOption === 'newest') {
+      updatedJobs.sort(
+        (a, b) => new Date(b.postedDate) - new Date(a.postedDate)
+      );
+    }
+
+    setFilteredJobs(updatedJobs);
+
+  }, [filters, jobs, sortOption]);
+
+  if (loading) {
+    return <LoadingSkeleton />;
+  }
+
+  if (error) {
+    return (
+      <ErrorState
+        onRetry={() => window.location.reload()}
+      />
+    );
+  }
 
   return (
+
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
+      <Header />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      <main className="container">
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+        <SearchFilters
+          filters={filters}
+          setFilters={setFilters}
+        />
+
+        <SortDropdown
+          sortOption={sortOption}
+          setSortOption={setSortOption}
+        />
+
+        <p>
+          Showing {filteredJobs.length} of {jobs.length} jobs
+        </p>
+
+        {
+          filteredJobs.length === 0 ? (
+            <EmptyState message="No jobs match your filters" />
+          ) : (
+            <JobList
+              jobs={filteredJobs}
+              onSelectJob={setSelectedJob}
+            />
+          )
+        }
+
+        {
+          selectedJob && (
+            <JobModal
+              selectedJob={selectedJob}
+              onClose={() => setSelectedJob(null)}
+            />
+          )
+        }
+
+      </main>
+
     </>
-  )
+  );
 }
 
-export default App
+export default App;
