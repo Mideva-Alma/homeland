@@ -53,13 +53,11 @@ function ProposalForm() {
   }
 
   return (
-
-    <form onSubmit={handleSubmit}>
-
-      <label>
-        Cover Letter
-      </label>
-
+    <form className="proposal-form" onSubmit={handleSubmit}>
+  
+      <h2>Submit Proposal</h2>
+  
+      <label>Cover Letter</label>
       <textarea
         value={formData.coverLetter}
         onChange={(e) =>
@@ -69,17 +67,12 @@ function ProposalForm() {
           })
         }
       />
-
-      {
-        errors.coverLetter && (
-          <p>{errors.coverLetter}</p>
-        )
-      }
-
-      <label>
-        Proposed Budget
-      </label>
-
+  
+      {errors.coverLetter && (
+        <p className="error">{errors.coverLetter}</p>
+      )}
+  
+      <label>Proposed Budget</label>
       <input
         type="number"
         value={formData.budget}
@@ -90,17 +83,12 @@ function ProposalForm() {
           })
         }
       />
-
-      {
-        errors.budget && (
-          <p>{errors.budget}</p>
-        )
-      }
-
-      <label>
-        Timeline in Days
-      </label>
-
+  
+      {errors.budget && (
+        <p className="error">{errors.budget}</p>
+      )}
+  
+      <label>Timeline in Days</label>
       <input
         type="number"
         value={formData.timeline}
@@ -111,17 +99,12 @@ function ProposalForm() {
           })
         }
       />
-
-      {
-        errors.timeline && (
-          <p>{errors.timeline}</p>
-        )
-      }
-
-      <label>
-        Portfolio URL
-      </label>
-
+  
+      {errors.timeline && (
+        <p className="error">{errors.timeline}</p>
+      )}
+  
+      <label>Portfolio URL</label>
       <input
         type="url"
         value={formData.portfolio}
@@ -132,8 +115,11 @@ function ProposalForm() {
           })
         }
       />
-
-      <button type="submit">Submit Proposal</button>
+  
+      <button type="submit">
+        Submit Proposal
+      </button>
+  
     </form>
   );
 }

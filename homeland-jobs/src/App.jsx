@@ -1,3 +1,4 @@
+import './styles/app.css';
 import { useEffect, useState } from 'react';
 import jobsData from './data/jobs.json';
 
